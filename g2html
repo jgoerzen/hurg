@@ -1,0 +1,14 @@
+#!/usr/bin/python2.1
+
+from GopherFile import *
+from GopherComm import *
+
+gd = GopherDir()
+
+gd.get('quux.org', 70, "")
+
+for entry in gd:
+    print "Type: %s, Name: %s, Sel: %s\n" % (entry.gettype(),
+	  entry.getname(), entry.getselector())
+
+
