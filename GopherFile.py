@@ -4,52 +4,92 @@ from UserDict import UserDict
 import urllib
 import cgi
 
-class GopherFile(UserDict):
+class GopherFile:
+    def __init__(self):
+        pass
+
     def makefromstring(self, host, port, string):
-        self.data = {}
+        self.entrydata = {}
         string = string.strip()
 
         parts = string.split("\t")
         
-        self.data['type'] = parts[0][0]
-        self.data['username'] = parts[0][1:]
-        self.data['selector'] = parts[1]
-        self.data['host'] = parts[2]
-        self.data['port'] = parts[3]
+        self.settype(parts[0][0])
+        self.setusername(parts[0][1:])
+        self.setselector(parts[1])
+        self.sethost(parts[2])
+        self.setport(parts[3])
 
-        if self.data['host'] == '+':
-            self.data['host'] = host
+        if self.gethost() == '+':
+            self.sethost(host)
 
-        if self.data['port'] == '+':
-            self.data['port'] = port
+        if self.getport() == '+':
+            self.setport(port)
+
+        self.rebless()
+
+    def settype(self, type):
+        self.entrydata['type'] = type
+
+    def setusername(self, username):
+        self.entrydata['username'] = username
+
+    def setselector(self, selector):
+        self.entrydata['selector'] = selector
+
+    def sethost(self, host):
+        self.entrydata['host'] = host
+
+    def setport(self, port):
+        self.entrydata['port'] = port
 
     def gettype(self):
-        return self.data['type']
+        return self.entrydata['type']
 
     def getusername(self):
-        return self.data['username']
+        return self.entrydata['username']
 
     def getselector(self):
-        return self.data['selector']
+        return self.entrydata['selector']
 
     def gethost(self):
-        return self.data['host']
+        return self.entrydata['host']
 
     def getport(self):
-        return self.data['port']
+        return self.entrydata['port']
 
     def getHTMLdirline(self, baseURL="/g2html"):
         return '<A HREF="%s">%s</A>' % \
-               ((baseURL + '?' + urllib.urlencode(self.data)),
+               ((baseURL + '?' + urllib.urlencode(self.entrydata)),
                 cgi.escape(self.getusername()))
 
-class GopherDir(UserList):
+    def implementsType(type):
+        return 0
+
+    def rebless(self):
+        for mod in dir(GopherFile):
+            if not type(getattr(GopherFile, mod)) is types.ClassType: continue
+            if (getattr(GopherFile, mod).implementsType(self.gettype())):
+                self.__class__ = getattr(GopherFile, mod)
+                self.__init__()
+                return self
+        return self
+
+class GopherFileInfo(GopherFile):
+    def implementsType(type):
+        return type == 'i'
+
+    def getHTMLline(self):
+        return "<TT>" + self.getusername() + "</TT>"
+
+class GopherFileDir(GopherFile, UserList):
     def __init__(self, foo=[]):
         self.data = foo
     
-    def get(self, host, port=70, selector=""):
+    def getfromnet(self):
         gc = GopherComm()
-        sock = gc.getdocsocket(host, port, selector).makefile()
+        sock = gc.getdocsocket(self.gethost(), self.getport(),
+                               self.selector()).makefile()
         self.data = []
 
         while 1:
@@ -62,5 +102,8 @@ class GopherDir(UserList):
             if not line[0] == '+':
                 gf = GopherFile()
                 gf.makefromstring(host, port, line)
+                gf.rebless()
                 self.data.append(gf)
             
+    def implementsType(type):
+        return type == '1'

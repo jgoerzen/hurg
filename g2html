@@ -3,9 +3,12 @@
 from GopherFile import *
 from GopherComm import *
 
-gd = GopherDir()
-
-gd.get('quux.org', 70, "")
+gd = GopherFileDir()
+gd.setselector('')
+gd.sethost('quux.org')
+gd.setport(70)
+gd.setusername('')
+gd.getfromnet()
 
 for entry in gd:
     print entry.getHTMLdirline() + "<BR>"
