@@ -8,6 +8,31 @@ import sys
 
 class GopherFile:
     implementsTypes = []
+    typemap = {
+        '0' : 'text/plain',
+        '1' : 'application/gopherdir',
+        '4' : 'application/mac-binhex40',
+        '5' : 'application/octet-stream',
+        '9' : 'application/octet-stream',
+        's' : 'audio/basic',
+        'I' : 'image/jpeg',
+        'g' : 'image/gif',
+        'h' : 'text/html',
+        'i' : ''}
+
+    imagemap = {
+        '0' : '/icons/text.gif',
+        '1' : '/icons/folder.gif',
+        '4' : '/icons/binhex.gif',
+        '5' : '/icons/binary.gif',
+        '9' : '/icons/binary.gif',
+        's' : '/icons/sound1.gif',
+        'I' : '/icons/image3.gif',
+        'g' : '/icons/image3.gif',
+        'h' : '/icons/text.gif',
+        'i' : None
+        }
+    
     def __init__(self):
         self.entrydata = {}
 
@@ -68,8 +93,14 @@ class GopherFile:
         return baseURL + '?' +urllib.urlencode(self.entrydata)
 
     def getHTMLdirline(self, baseURL="/g2html/g2html"):
-        return '<A HREF="%s">%s</A>' % (self.getHTMLlink(baseURL),
+        return '<A HREF="%s"><TT>%s</TT></A>' % (self.getHTMLlink(baseURL),
                                         self.getHTMLusername())
+
+    def getHTMLimagetag(self):
+        if self.imagemap[self.gettype()]:
+            return '<IMG SRC="' + self.imagemap[self.gettype()] + '">'
+        else:
+            return '&nbsp;'
 
     def rebless(self):
         for mod in globals().keys():
@@ -85,8 +116,11 @@ class GopherFile:
     def blessinit(self):
         pass
 
+    def getcontenttype(self):
+        return self.typemap[self.gettype()]
+
     def display(self):
-        print "Content-Type: text/plain"
+        print "Content-Type: " + self.getcontenttype()
         print
         gc = GopherComm()
         sock = gc.getdocsocket(self.gethost(), self.getport(),
@@ -98,6 +132,9 @@ class GopherFileInfo(GopherFile):
     
     def getHTMLdirline(self):
         return "<TT>" + self.getusername() + "</TT>"
+
+class GopherFileMisc(GopherFile):
+    implementsTypes = ['0', '4', '5', '9', 's', 'I', 'g', 'h']
 
 class GopherFileDir(GopherFile, UserList):
     implementsTypes = ['1']
@@ -132,10 +169,19 @@ class GopherFileDir(GopherFile, UserList):
         self.getfromnet()
         print "Content-Type: text/html"
         print
-        print "<HTML><BODY>"
+        print "<HTML><HEAD><TITLE>Gopher Menu: "
+        print cgi.escape(self.getusername())
+        print "</TITLE></HEAD><BODY><H1>"
+        print cgi.escape(self.getusername())
+        print '</H1><P><TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0">'
         for entry in self.data:
-            print entry.getHTMLdirline() + "<BR>"
-        print "</BODY></HTML>"
+            print "<TR><TD>" + entry.getHTMLimagetag() + "</TD>"
+            print "<TD>&nbsp;" + entry.getHTMLdirline()
+            ct = entry.getcontenttype()
+            if ct.rfind('/') > 0:
+                ct = ct[ct.rfind('/')+1:]
+            print '</TD><TD><FONT SIZE="-2">%s</FONT></TD></TR>' % ct
+        print "</TABLE></BODY></HTML>"
 
 
 def copy(infile, outfile):
