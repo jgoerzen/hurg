@@ -1,4 +1,4 @@
-# $Id: GopherFiles.py,v 1.13 2001/08/29 06:55:00 jgoerzen Exp $
+# $Id: GopherFiles.py,v 1.14 2001/08/29 07:13:01 jgoerzen Exp $
 
 # The file is part of HURG
 # Copyright (C) 2001 John Goerzen
@@ -114,17 +114,22 @@ class GopherFile:
             else:
                 return self.getusername()
 
-    def getHTMLlink(self, baseURL="hurg"):
+    def getHTMLlink(self, baseURL="hurg", about=0):
+        if about:
+            return self.getHTMLlink(about=0) + '&cmd=about'
         return baseURL + '?' +urllib.urlencode(self.entrydata)
 
     def getHTMLdirline(self, baseURL="hurg"):
         return '<A HREF="%s"><TT>%s</TT></A>' % (self.getHTMLlink(baseURL),
                                         self.getHTMLusername(0))
 
-    def getHTMLimagetag(self):
+    def getHTMLimagetag(self, aboutlink=0):
         if self.imagemap.has_key(self.gettype()) and \
            self.imagemap[self.gettype()]:
-            return '<IMG SRC="' + self.imagemap[self.gettype()] + '">'
+            if aboutlink:
+                return '<A HREF="' + self.getHTMLlink(about=1) + '">' + \
+                       self.getHTMLimagetag(aboutlink=0) + '</A>'
+            return '<IMG SRC="' + self.imagemap[self.gettype()] + '" BORDER=0>'
         else:
             return '&nbsp;'
 
@@ -204,7 +209,7 @@ class GopherFileDir(GopherFile, UserList):
         print cgi.escape(self.getusername())
         print '</H1><P><TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0">'
         for entry in self.data:
-            print "<TR><TD>" + entry.getHTMLimagetag() + "</TD>"
+            print "<TR><TD>" + entry.getHTMLimagetag(aboutlink=1) + "</TD>"
             print "<TD>&nbsp;" + entry.getHTMLdirline()
             ct = entry.getcontenttype()
             if ct.rfind('/') > 0:
