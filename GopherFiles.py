@@ -1,4 +1,4 @@
-# $Id: GopherFiles.py,v 1.16 2001/08/29 17:01:36 jgoerzen Exp $
+# $Id: GopherFiles.py,v 1.17 2001/08/29 17:08:18 jgoerzen Exp $
 
 # The file is part of HURG
 # Copyright (C) 2001 John Goerzen
@@ -53,12 +53,14 @@ class GopherFile:
         'i' : None
         }
     
-    def __init__(self, host=None, port=70, selector=None, username=None):
+    def __init__(self, host=None, port=70, type='0', selector=None,
+                 username=None):
         self.entrydata = {}
         self.spiel = ''
 
         self.sethost(host)
         self.setport(port)
+        self.settype(type)
         self.setselector(selector)
         self.setusername(username)
 
@@ -239,7 +241,7 @@ class GopherFileDir(GopherFile, UserList):
             print '</TD><TD><FONT SIZE="-2">%s</FONT></TD></TR>' % ct
         print "</TABLE><HR>"
         serverroot = GopherFile(self.gethost(), self.getport(),
-                                '', self.gethost())
+                                '1', '', self.gethost())
         print '[<A HREF="' + serverroot.getHTMLlink() + '">server top</A>]' + \
               '&nbsp;[<A HREF="' + self.getHTMLlink(about=1) + \
               '">about</A>]&nbsp;[<A HREF="' + self.getgopherURL() + \

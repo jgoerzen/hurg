@@ -1,6 +1,6 @@
 #!/usr/bin/python2.1
 
-# $Id: hurg,v 1.7 2001/08/29 17:01:36 jgoerzen Exp $
+# $Id: hurg,v 1.8 2001/08/29 17:08:18 jgoerzen Exp $
 
 # The file is part of HURG
 # Copyright (C) 2001 John Goerzen
@@ -84,8 +84,13 @@ else:
         You are browsing Gopher through a Web gateway right now.  You can also
         use most browsers or Gopher clients to browse Gopher natively.
         If your browser supports it, try clicking on the "native view" link
-        at the bottom of this page to see Gopher directly.  Enjoy your
-        visit!<HR>""")
+        at the bottom of this page to see Gopher directly.
+        To find Gopher browsers, <A HREF="%s">click here</A>.
+        Enjoy your visit!<HR>""" %
+                           GopherFiles.GopherFile('gopher.quux.org', 70,
+                                      '1',
+                                      '/Software/Gopher/Downloads/Clients',
+                                      'Gopher Browsers').getHTMLlink())
         
     gopherobj.rebless()
     gopherobj.display()
