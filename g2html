@@ -8,11 +8,11 @@ gopherobj = GopherFiles.GopherFile()
 if form.has_key("selector") and form.has_key("host") and \
    form.has_key("username") and form.has_key("port") and \
    form.has_key("type"):
-    gopherobj.setselector(form['selector'])
-    gopherobj.sethost(form['host'])
-    gopherobj.setusername(form['username'])
-    gopherobj.setport(form['port'])
-    gopherobj.settype(form['type'])
+    gopherobj.setselector(form['selector'].value)
+    gopherobj.sethost(form['host'].value)
+    gopherobj.setusername(form['username'].value)
+    gopherobj.setport(int(form['port'].value))
+    gopherobj.settype(form['type'].value)
 else:
     gopherobj.setselector('')
     gopherobj.sethost('quux.org')

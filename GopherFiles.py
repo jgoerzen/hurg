@@ -4,6 +4,7 @@ from UserDict import UserDict
 import urllib
 import cgi
 import types
+import sys
 
 class GopherFile:
     implementsTypes = []
@@ -66,7 +67,7 @@ class GopherFile:
     def getHTMLlink(self, baseURL="/g2html"):
         return baseURL + '?' +urllib.urlencode(self.entrydata)
 
-    def getHTMLdirline(self, baseURL="/g2html"):
+    def getHTMLdirline(self, baseURL="/g2html/g2html"):
         return '<A HREF="%s">%s</A>' % (self.getHTMLlink(baseURL),
                                         self.getHTMLusername())
 
@@ -137,8 +138,8 @@ class GopherFileDir(GopherFile, UserList):
         print "</BODY></HTML>"
 
 
-def copy(in, out):
+def copy(infile, outfile):
     while 1:
-        line = in.read(4096)
-        if line.length == 0: break
-        out.write(line)
+        line = infile.read(4096)
+        if len(line) == 0: break
+        outfile.write(line)
