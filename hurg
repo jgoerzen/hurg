@@ -1,6 +1,6 @@
 #!/usr/bin/python2.1
 
-# $Id: hurg,v 1.6 2001/08/29 14:29:42 jgoerzen Exp $
+# $Id: hurg,v 1.7 2001/08/29 17:01:36 jgoerzen Exp $
 
 # The file is part of HURG
 # Copyright (C) 2001 John Goerzen
@@ -78,6 +78,14 @@ else:
         gopherobj.setport(70)
         gopherobj.setusername('Quux.Org')
         gopherobj.settype('1')
+
+    if form.has_key("cannedspiel"):
+        gopherobj.setspiel("""Welcome to Gopherspace!
+        You are browsing Gopher through a Web gateway right now.  You can also
+        use most browsers or Gopher clients to browse Gopher natively.
+        If your browser supports it, try clicking on the "native view" link
+        at the bottom of this page to see Gopher directly.  Enjoy your
+        visit!<HR>""")
         
     gopherobj.rebless()
     gopherobj.display()
