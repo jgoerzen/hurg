@@ -1,4 +1,4 @@
-# $Id: GopherFiles.py,v 1.18 2001/08/29 18:18:55 jgoerzen Exp $
+# $Id: GopherFiles.py,v 1.19 2001/08/29 19:28:47 jgoerzen Exp $
 
 # The file is part of HURG
 # Copyright (C) 2001 John Goerzen
@@ -31,6 +31,7 @@ class GopherFile:
     typemap = {
         '0' : 'text/plain',
         '1' : 'application/gopherdir',
+        '3' : 'error/error',
         '4' : 'application/mac-binhex40',
         '5' : 'application/octet-stream',
         '9' : 'application/octet-stream',
@@ -188,6 +189,12 @@ class GopherFileInfo(GopherFile):
     def getHTMLdirline(self):
         return "<TT>" + re.sub(' ', '&nbsp;', self.getusername()) + "</TT>"
 
+class GopherFileError(GopherFile):
+    implementsTypes = ['3']
+
+    def getHTMLdirline(self):
+        return '&nbsp;'
+
 class GopherFileMisc(GopherFile):
     implementsTypes = ['0', '4', '5', '9', 's', 'I', 'g', 'h']
 
@@ -224,6 +231,8 @@ class GopherFileDir(GopherFile, UserList):
         self.getfromnet()
         print "Content-Type: text/html"
         print
+        print """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+        "http://www.w3.org/TR/REC-html40/loose.dtd">"""
         print "<HTML><HEAD><TITLE>Gopher: "
         print cgi.escape(self.getusername())
         print "</TITLE></HEAD><BODY>"
@@ -233,12 +242,12 @@ class GopherFileDir(GopherFile, UserList):
         print '</H1>'
         print '<TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0">'
         for entry in self.data:
-            print "<TR><TD>" + entry.getHTMLimagetag(aboutlink=1) + "</TD>"
-            print "<TD>&nbsp;" + entry.getHTMLdirline()
+            print "<TR><TD>" + entry.getHTMLimagetag(aboutlink=1) + "</TD>" ,
+            print "<TD>&nbsp;" + entry.getHTMLdirline() ,
             ct = entry.getcontenttype()
             if ct and ct.rfind('/') > 0:
                 ct = ct[ct.rfind('/')+1:]
-            print '</TD><TD><FONT SIZE="-2">%s</FONT></TD></TR>' % ct
+            print '</TD><TD><FONT SIZE="-2">%s</FONT></TD></TR>' % ct 
         print "</TABLE><HR>"
         serverroot = GopherFile(self.gethost(), self.getport(),
                                 '1', '', self.gethost())
