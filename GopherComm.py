@@ -1,4 +1,4 @@
-# $Id: GopherComm.py,v 1.5 2001/08/29 05:46:22 jgoerzen Exp $
+# $Id: GopherComm.py,v 1.6 2001/08/29 06:23:59 jgoerzen Exp $
 
 # The file is part of HURG
 # Copyright (C) 2001 John Goerzen
@@ -17,11 +17,11 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from socket import *
+import socket
 
 class GopherComm:
     def __init__(self):
-        self.VERSION = '$Id: GopherComm.py,v 1.5 2001/08/29 05:46:22 jgoerzen Exp $'
+        self.VERSION = '$Id: GopherComm.py,v 1.6 2001/08/29 06:23:59 jgoerzen Exp $'
     
     def getdocsocket(self, host, port=70, selector=""):
         socket = self.connectTCP(host, port)
@@ -29,6 +29,6 @@ class GopherComm:
         return socket
 
     def connectTCP(self, host, port):
-        s = socket(AF_INET, SOCK_STREAM)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((host, port))
         return s
