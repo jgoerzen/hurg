@@ -3,10 +3,11 @@ from UserList import UserList
 from UserDict import UserDict
 import urllib
 import cgi
+import types
 
 class GopherFile:
     def __init__(self):
-        pass
+        self.entrydata = {}
 
     def makefromstring(self, host, port, string):
         self.entrydata = {}
@@ -67,13 +68,19 @@ class GopherFile:
         return 0
 
     def rebless(self):
-        for mod in dir(GopherFile):
-            if not type(getattr(GopherFile, mod)) is types.ClassType: continue
-            if (getattr(GopherFile, mod).implementsType(self.gettype())):
-                self.__class__ = getattr(GopherFile, mod)
-                self.__init__()
+        for mod in dir(GopherFiles):
+            print "<!-- Start: %s -->\n" % mod
+            if not type(getattr(GopherFiles, mod)) is types.ClassType: continue
+            print "<!-- Trying: %s -->\n" % mod
+            if (getattr(GopherFiles, mod).implementsType(self.gettype())):
+                print "<!-- MATCH: %s -->\n" % mod
+                self.__class__ = getattr(GopherFiles, mod)
+                self.blessinit()
                 return self
         return self
+
+    def blessinit(self):
+        pass
 
 class GopherFileInfo(GopherFile):
     def implementsType(type):
@@ -85,11 +92,15 @@ class GopherFileInfo(GopherFile):
 class GopherFileDir(GopherFile, UserList):
     def __init__(self, foo=[]):
         self.data = foo
+        GopherFile.__init__(self)
+
+    def blessinit(self):
+        delf.data = []
     
     def getfromnet(self):
         gc = GopherComm()
         sock = gc.getdocsocket(self.gethost(), self.getport(),
-                               self.selector()).makefile()
+                               self.getselector()).makefile()
         self.data = []
 
         while 1:
@@ -101,7 +112,7 @@ class GopherFileDir(GopherFile, UserList):
 
             if not line[0] == '+':
                 gf = GopherFile()
-                gf.makefromstring(host, port, line)
+                gf.makefromstring(self.gethost(), self.getport(), line)
                 gf.rebless()
                 self.data.append(gf)
             
