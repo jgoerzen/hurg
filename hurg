@@ -1,0 +1,41 @@
+#!/usr/bin/python2.1
+
+import GopherFiles
+import cgi
+
+form = cgi.FieldStorage()
+gopherobj = GopherFiles.GopherFile()
+if form.has_key("cmd"):
+    if (form['cmd'].value == 'open'):
+        print "Content-Type: text/html"
+        print
+        print """<HTML><HEAD><TITLE>HURG: Open</TITLE></HEAD><BODY>
+        <FORM METHOD=GET ACTION="hurg">
+        <INPUT TYPE=hidden NAME=username VALUE=" ">
+        Host: <INPUT TYPE=text NAME=host><BR>
+        Port: <INPUT TYPE=text NAME=port VALUE="70"><BR>
+        Type: <INPUT TYPE=text NAME=type VALUE="1" WIDTH=1><BR>
+        Selector: <INPUT TYPE=text NAME=selector><BR>
+        <INPUT TYPE=submit NAME=Submit VALUE=Submit>
+        </FORM></BODY></HTML>"""
+else:
+    if form.has_key("selector") and form.has_key("host") and \
+       form.has_key("username") and form.has_key("port") and \
+       form.has_key("type"):
+        gopherobj.setselector(form['selector'].value)
+        gopherobj.sethost(form['host'].value)
+        gopherobj.setusername(form['username'].value)
+        gopherobj.setport(int(form['port'].value))
+        gopherobj.settype(form['type'].value)
+    else:
+        gopherobj.setselector('')
+        gopherobj.sethost('gopher.floodgap.com')
+        gopherobj.setport(70)
+        gopherobj.setusername('')
+        gopherobj.settype('1')
+        
+        gopherobj.rebless()
+        gopherobj.display()
+
+
+
