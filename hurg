@@ -1,6 +1,6 @@
 #!/usr/bin/python2.1
 
-# $Id: hurg,v 1.5 2001/08/29 07:14:25 jgoerzen Exp $
+# $Id: hurg,v 1.6 2001/08/29 14:29:42 jgoerzen Exp $
 
 # The file is part of HURG
 # Copyright (C) 2001 John Goerzen
@@ -76,7 +76,7 @@ else:
         gopherobj.setselector('')
         gopherobj.sethost('gopher.quux.org')
         gopherobj.setport(70)
-        gopherobj.setusername('')
+        gopherobj.setusername('Quux.Org')
         gopherobj.settype('1')
         
     gopherobj.rebless()
