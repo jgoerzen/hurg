@@ -1,7 +1,6 @@
 #!/usr/bin/python2.1
 
-from GopherFile import *
-from GopherComm import *
+from GopherFiles import GopherFileDir
 
 gd = GopherFileDir()
 gd.setselector('')
