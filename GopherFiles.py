@@ -1,4 +1,4 @@
-# $Id: GopherFiles.py,v 1.9 2001/08/29 06:38:08 jgoerzen Exp $
+# $Id: GopherFiles.py,v 1.13 2001/08/29 06:55:00 jgoerzen Exp $
 
 # The file is part of HURG
 # Copyright (C) 2001 John Goerzen
@@ -105,15 +105,21 @@ class GopherFile:
     def getport(self):
         return self.entrydata['port']
 
-    def getHTMLusername(self):
-        return cgi.escape(self.getusername())
+    def getHTMLusername(self, allowblank=1):
+        if allowblank:
+            return cgi.escape(self.getusername())
+        else:
+            if len(self.getusername()) < 1:
+                return '[No title]'
+            else:
+                return self.getusername()
 
     def getHTMLlink(self, baseURL="hurg"):
         return baseURL + '?' +urllib.urlencode(self.entrydata)
 
     def getHTMLdirline(self, baseURL="hurg"):
         return '<A HREF="%s"><TT>%s</TT></A>' % (self.getHTMLlink(baseURL),
-                                        self.getHTMLusername())
+                                        self.getHTMLusername(0))
 
     def getHTMLimagetag(self):
         if self.imagemap.has_key(self.gettype()) and \
