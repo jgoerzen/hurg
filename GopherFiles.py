@@ -1,4 +1,4 @@
-# $Id: GopherFiles.py,v 1.7 2001/08/29 05:46:22 jgoerzen Exp $
+# $Id: GopherFiles.py,v 1.9 2001/08/29 06:38:08 jgoerzen Exp $
 
 # The file is part of HURG
 # Copyright (C) 2001 John Goerzen
@@ -116,7 +116,8 @@ class GopherFile:
                                         self.getHTMLusername())
 
     def getHTMLimagetag(self):
-        if self.imagemap[self.gettype()]:
+        if self.imagemap.has_key(self.gettype()) and \
+           self.imagemap[self.gettype()]:
             return '<IMG SRC="' + self.imagemap[self.gettype()] + '">'
         else:
             return '&nbsp;'
@@ -136,7 +137,10 @@ class GopherFile:
         pass
 
     def getcontenttype(self):
-        return self.typemap[self.gettype()]
+        if self.typemap.has_key(self.gettype()):
+            return self.typemap[self.gettype()]
+        else:
+            return None
 
     def display(self):
         print "Content-Type: " + self.getcontenttype()
