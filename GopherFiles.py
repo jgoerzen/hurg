@@ -6,6 +6,7 @@ import cgi
 import types
 
 class GopherFile:
+    implementsTypes = []
     def __init__(self):
         self.entrydata = {}
 
@@ -59,22 +60,23 @@ class GopherFile:
     def getport(self):
         return self.entrydata['port']
 
-    def getHTMLdirline(self, baseURL="/g2html"):
-        return '<A HREF="%s">%s</A>' % \
-               ((baseURL + '?' + urllib.urlencode(self.entrydata)),
-                cgi.escape(self.getusername()))
+    def getHTMLusername(self):
+        return cgi.escape(self.getusername())
 
-    def implementsType(type):
-        return 0
+    def getHTMLlink(self, baseURL="/g2html"):
+        return baseURL + '?' +urllib.urlencode(self.entrydata)
+
+    def getHTMLdirline(self, baseURL="/g2html"):
+        return '<A HREF="%s">%s</A>' % (self.getHTMLlink(baseURL),
+                                        self.getHTMLusername())
 
     def rebless(self):
-        for mod in dir(GopherFiles):
-            print "<!-- Start: %s -->\n" % mod
-            if not type(getattr(GopherFiles, mod)) is types.ClassType: continue
-            print "<!-- Trying: %s -->\n" % mod
-            if (getattr(GopherFiles, mod).implementsType(self.gettype())):
-                print "<!-- MATCH: %s -->\n" % mod
-                self.__class__ = getattr(GopherFiles, mod)
+        for mod in globals().keys():
+            val = globals()[mod]
+            if not type(val) is types.ClassType: continue
+            if not issubclass(val, GopherFile): continue
+            if (self.gettype() in val.implementsTypes):
+                self.__class__ = val
                 self.blessinit()
                 return self
         return self
@@ -82,20 +84,29 @@ class GopherFile:
     def blessinit(self):
         pass
 
-class GopherFileInfo(GopherFile):
-    def implementsType(type):
-        return type == 'i'
+    def display(self):
+        print "Content-Type: text/plain"
+        print
+        gc = GopherComm()
+        sock = gc.getdocsocket(self.gethost(), self.getport(),
+                               self.getselector()).makefile()
+        copy(sock, sys.stdout)
 
-    def getHTMLline(self):
+class GopherFileInfo(GopherFile):
+    implementsTypes = ['i']
+    
+    def getHTMLdirline(self):
         return "<TT>" + self.getusername() + "</TT>"
 
 class GopherFileDir(GopherFile, UserList):
+    implementsTypes = ['1']
+    
     def __init__(self, foo=[]):
         self.data = foo
         GopherFile.__init__(self)
 
     def blessinit(self):
-        delf.data = []
+        self.data = []
     
     def getfromnet(self):
         gc = GopherComm()
@@ -115,6 +126,19 @@ class GopherFileDir(GopherFile, UserList):
                 gf.makefromstring(self.gethost(), self.getport(), line)
                 gf.rebless()
                 self.data.append(gf)
-            
-    def implementsType(type):
-        return type == '1'
+    
+    def display(self):
+        self.getfromnet()
+        print "Content-Type: text/html"
+        print
+        print "<HTML><BODY>"
+        for entry in self.data:
+            print entry.getHTMLdirline() + "<BR>"
+        print "</BODY></HTML>"
+
+
+def copy(in, out):
+    while 1:
+        line = in.read(4096)
+        if line.length == 0: break
+        out.write(line)
