@@ -1,6 +1,6 @@
 #!/usr/bin/python2.1
 
-# $Id: hurg,v 1.8 2001/08/29 17:08:18 jgoerzen Exp $
+# $Id: hurg,v 1.9 2001/08/29 18:18:55 jgoerzen Exp $
 
 # The file is part of HURG
 # Copyright (C) 2001 John Goerzen
@@ -21,6 +21,10 @@
 
 import GopherFiles
 import cgi
+import socket
+import sys
+import traceback
+import os
 
 def populate(gopherobj, form):
     gopherobj.setselector(form['selector'].value)
@@ -28,6 +32,15 @@ def populate(gopherobj, form):
     gopherobj.setusername(form['username'].value)
     gopherobj.setport(int(form['port'].value))
     gopherobj.settype(form['type'].value)
+
+def errorpage(message, tb):
+    print 'Content-Type: text/html'
+    print
+    print '<HTML><BODY><H1>HURG Error</H1><PRE>'
+    print message
+    # traceback.print_exc(file=sys.stdout)
+    print '</PRE></BODY></HTML>'
+    sys.exit(0)
 
 form = cgi.FieldStorage(keep_blank_values=1)
 if form.has_key("cmd"):
@@ -93,5 +106,12 @@ else:
                                       'Gopher Browsers').getHTMLlink())
         
     gopherobj.rebless()
-    gopherobj.display()
+    try:
+        gopherobj.display()
+    except IOError, (errno,):
+        errorpage("I/O error: %s\n" % (errno),
+                  sys.exc_info()[2])
+    except socket.error, (errno):
+        errorpage("Socket error: %s\n" % (errno),
+                  sys.exc_info()[2])
 

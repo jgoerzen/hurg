@@ -1,4 +1,4 @@
-# $Id: GopherFiles.py,v 1.17 2001/08/29 17:08:18 jgoerzen Exp $
+# $Id: GopherFiles.py,v 1.18 2001/08/29 18:18:55 jgoerzen Exp $
 
 # The file is part of HURG
 # Copyright (C) 2001 John Goerzen
@@ -172,7 +172,7 @@ class GopherFile:
         if self.typemap.has_key(self.gettype()):
             return self.typemap[self.gettype()]
         else:
-            return None
+            return 'text/plain'
 
     def display(self):
         print "Content-Type: " + self.getcontenttype()
@@ -236,7 +236,7 @@ class GopherFileDir(GopherFile, UserList):
             print "<TR><TD>" + entry.getHTMLimagetag(aboutlink=1) + "</TD>"
             print "<TD>&nbsp;" + entry.getHTMLdirline()
             ct = entry.getcontenttype()
-            if ct.rfind('/') > 0:
+            if ct and ct.rfind('/') > 0:
                 ct = ct[ct.rfind('/')+1:]
             print '</TD><TD><FONT SIZE="-2">%s</FONT></TD></TR>' % ct
         print "</TABLE><HR>"
