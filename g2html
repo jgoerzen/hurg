@@ -8,7 +8,7 @@ gd = GopherDir()
 gd.get('quux.org', 70, "")
 
 for entry in gd:
-    print "Type: %s, Name: %s, Sel: %s\n" % (entry.gettype(),
-	  entry.getname(), entry.getselector())
+    print entry.getHTMLdirline() + "<BR>"
+
 
 

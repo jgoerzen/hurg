@@ -1,33 +1,10 @@
 from GopherComm import GopherComm
 from UserList import UserList
 from UserDict import UserDict
+import urllib
+import cgi
 
-class GopherFile:
-    def __init__(self):
-        self.VERSION = '$Id'
-
-class GopherDir(UserList):
-    def __init__(self, foo=[]):
-        self.data = foo
-    
-    def get(self, host, port=70, selector=""):
-        gc = GopherComm()
-        sock = gc.getdocsocket(host, port, selector).makefile()
-        self.data = []
-
-        while 1:
-            line = sock.readline()
-            if not line: break
-            line = line.strip()
-
-            if line == '.': break
-
-            if not line[0] == '+':
-                gde = GopherDirEntry()
-                gde.makefromstring(host, port, line)
-                self.data.append(gde)
-            
-class GopherDirEntry(UserDict):
+class GopherFile(UserDict):
     def makefromstring(self, host, port, string):
         self.data = {}
         string = string.strip()
@@ -60,3 +37,30 @@ class GopherDirEntry(UserDict):
 
     def getport(self):
         return self.data['port']
+
+    def getHTMLdirline(self, baseURL="/g2html"):
+        return '<A HREF="%s">%s</A>' % \
+               ((baseURL + '?' + urllib.urlencode(self.data)),
+                cgi.escape(self.getusername()))
+
+class GopherDir(UserList):
+    def __init__(self, foo=[]):
+        self.data = foo
+    
+    def get(self, host, port=70, selector=""):
+        gc = GopherComm()
+        sock = gc.getdocsocket(host, port, selector).makefile()
+        self.data = []
+
+        while 1:
+            line = sock.readline()
+            if not line: break
+            line = line.strip()
+
+            if line == '.': break
+
+            if not line[0] == '+':
+                gf = GopherFile()
+                gf.makefromstring(host, port, line)
+                self.data.append(gf)
+            
